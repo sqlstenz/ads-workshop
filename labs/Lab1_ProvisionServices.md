@@ -5,8 +5,8 @@
 #### 1.	Navigate to https://portal.azure.com in a web browser
 
 #### 2.	Search for Azure Data Science in the marketplace
-![](/screenshots/Lab1_ProvisionServices/ADS01_Search.png)
-![](/screenshots/Lab1_ProvisionServices/ADS02_Create.png)
+   ![](/screenshots/Lab1_ProvisionServices/ADS01_Search.png)
+   ![](/screenshots/Lab1_ProvisionServices/ADS02_Create.png)
 
 #### 3. Enter configuration details for Azure Data Science VM
    **1. Name:** adswkshpvm
@@ -127,6 +127,6 @@
 
 #### 1.	Install USQL Extensions for Data Lake Analytics
 
-	![](/screenshots/Lab1_ProvisionServices/ADS16_InstallExtensions.png)
+   ![](/screenshots/Lab1_ProvisionServices/ADS16_InstallExtensions.png)
 
 
