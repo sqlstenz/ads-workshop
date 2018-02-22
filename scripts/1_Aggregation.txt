@@ -1,0 +1,41 @@
+DECLARE @inFactInternetSales = "/Raw/AWSQLDB/FactInternetSales.txt";
+DECLARE @out = "/Transformed/AWSQLDB/1_AggregationOutput.txt";
+
+@factInternetSales =
+EXTRACT [ProductKey]                int,
+        [OrderDateKey]              int,
+        [DueDateKey]                int,
+        [ShipDateKey]               int,
+        [CustomerKey]               int,
+        [PromotionKey]              int,
+        [CurrencyKey]               int,
+        [SalesTerritoryKey]         int,
+        [SalesOrderNumber]          string,
+        [SalesOrderLineNumber]      int,
+        [RevisionNumber]            int,
+        [OrderQuantity]             int,
+        [UnitPrice]                 double,
+        [ExtendedAmount]            double,
+        [UnitPriceDiscountPct]      int,
+        [DiscountAmount]            int,
+        [ProductStandardCost]       double,
+        [TotalProductCost]          double,
+        [SalesAmount]               double,
+        [TaxAmt]                    double,
+        [Freight]                   double,
+        [CarrierTrackingNumber]     string,
+        [CustomerPONumber]          string,
+        [OrderDate]                 DateTime,
+        [DueDate]                   DateTime,
+        [ShipDate]                  DateTime
+FROM @inFactInternetSales
+USING Extractors.Text(delimiter: '|', skipFirstNRows: 1);
+
+@res =
+SELECT ProductKey, SUM(OrderQuantity) AS ProductQuantityTotal
+FROM @factInternetSales
+GROUP BY ProductKey;
+
+OUTPUT @res
+TO @out
+USING Outputters.Text(delimiter : '|', outputHeader : true);

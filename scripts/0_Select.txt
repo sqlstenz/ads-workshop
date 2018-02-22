@@ -1,0 +1,52 @@
+DECLARE @inProduct = "/Raw/AWSQLDB/DimProduct.txt";
+DECLARE @outProduct = "/Transformed/AWSQLDB/0_SelectOutput.txt";
+
+@Product =
+EXTRACT [ProductKey]                int,
+        [ProductAlternateKey]       string,
+        [ProductSubcategoryKey]     string,
+        [WeightUnitMeasureCode]     string,
+        [SizeUnitMeasureCode]       string,
+        [EnglishProductName]        string,
+        [SpanishProductName]        string,
+        [FrenchProductName]         string,
+        [StandardCost]              string,
+        [FinishedGoodsFlag]         bool,
+        [Color]                     string,
+        [SafetyStockLevel]          int,
+        [ReorderPoint]              int,
+        [ListPrice]                 string,
+        [Size]                      string,
+        [SizeRange]                 string,
+        [Weight]                    string,
+        [DaysToManufacture]         int,
+        [ProductLine]               string,
+        [DealerPrice]               string,
+        [Class]                     string,
+        [Style]                     string,
+        [ModelName]                 string,
+        [LargePhoto]                string,
+        [EnglishDescription]        string,
+        [FrenchDescription]         string,
+        [ChineseDescription]        string,
+        [ArabicDescription]         string,
+        [HebrewDescription]         string,
+        [ThaiDescription]           string,
+        [GermanDescription]         string,
+        [JapaneseDescription]       string,
+        [TurkishDescription]        string,
+        [StartDate]                 DateTime,
+        [EndDate]                   string,
+        [Status]                    string
+FROM @inProduct
+USING Extractors.Text(delimiter: '|', skipFirstNRows: 1);
+
+@res =
+SELECT *
+FROM @Product;
+
+OUTPUT @res
+TO @outProduct
+USING Outputters.Text(delimiter : '|', outputHeader : true);
+
+

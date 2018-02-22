@@ -1,0 +1,25 @@
+REFERENCE ASSEMBLY [TextCommon];
+REFERENCE ASSEMBLY [TextSentiment];
+REFERENCE ASSEMBLY [TextKeyPhrase];
+
+DECLARE @outSentiment = "/Transformed/AWSQLDB/6_CognitiveServicesSentimentOutput.txt";
+
+@BikeCollisionSentiment =
+SELECT objectid, sdot_colcode, severitydesc AS Text
+FROM master.dbo.BikeCollisionData;
+
+@sentiment =
+    PROCESS @BikeCollisionSentiment
+    PRODUCE objectid,
+            sdot_colcode,
+            Text,
+            Sentiment string,
+            Conf double
+    READONLY objectid,
+             sdot_colcode,
+             Text
+    USING new Cognition.Text.SentimentAnalyzer(true);
+
+OUTPUT @sentiment
+TO @outSentiment
+USING Outputters.Text(delimiter: '|', outputHeader : true, quoting:false);

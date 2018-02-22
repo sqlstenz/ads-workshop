@@ -1,0 +1,123 @@
+DROP VIEW IF EXISTS FactInternetSalesView;
+
+DECLARE @output = "/Transformed/AWSQLDB/5_CreateViewOutput.txt";
+
+CREATE VIEW FactInternetSalesView AS  
+EXTRACT [ProductKey]                int,
+        [OrderDateKey]              int,
+        [DueDateKey]                int,
+        [ShipDateKey]               int,
+        [CustomerKey]               int,
+        [PromotionKey]              int,
+        [CurrencyKey]               int,
+        [SalesTerritoryKey]         int,
+        [SalesOrderNumber]          string,
+        [SalesOrderLineNumber]      int,
+        [RevisionNumber]            int,
+        [OrderQuantity]             int,
+        [UnitPrice]                 double,
+        [ExtendedAmount]            double,
+        [UnitPriceDiscountPct]      int,
+        [DiscountAmount]            int,
+        [ProductStandardCost]       double,
+        [TotalProductCost]          double,
+        [SalesAmount]               double,
+        [TaxAmt]                    double,
+        [Freight]                   double,
+        [CarrierTrackingNumber]     string,
+        [CustomerPONumber]          string,
+        [OrderDate]                 DateTime,
+        [DueDate]                   DateTime,
+        [ShipDate]                  DateTime
+FROM "/Raw/AWSQLDB/FactInternetSales.txt"
+USING Extractors.Text(delimiter: '|', skipFirstNRows: 1);
+
+DROP VIEW IF EXISTS ProductView;
+
+CREATE VIEW ProductView AS  
+EXTRACT [ProductKey]                int,
+        [ProductAlternateKey]       string,
+        [ProductSubcategoryKey]     int?,
+        [WeightUnitMeasureCode]     string,
+        [SizeUnitMeasureCode]       string,
+        [EnglishProductName]        string,
+        [SpanishProductName]        string,
+        [FrenchProductName]         string,
+        [StandardCost]              string,
+        [FinishedGoodsFlag]         bool,
+        [Color]                     string,
+        [SafetyStockLevel]          int,
+        [ReorderPoint]              int,
+        [ListPrice]                 string,
+        [Size]                      string,
+        [SizeRange]                 string,
+        [Weight]                    string,
+        [DaysToManufacture]         int,
+        [ProductLine]               string,
+        [DealerPrice]               string,
+        [Class]                     string,
+        [Style]                     string,
+        [ModelName]                 string,
+        [LargePhoto]                string,
+        [EnglishDescription]        string,
+        [FrenchDescription]         string,
+        [ChineseDescription]        string,
+        [ArabicDescription]         string,
+        [HebrewDescription]         string,
+        [ThaiDescription]           string,
+        [GermanDescription]         string,
+        [JapaneseDescription]       string,
+        [TurkishDescription]        string,
+        [StartDate]                 DateTime,
+        [EndDate]                   string,
+        [Status]                    string
+FROM "/Raw/AWSQLDB/DimProduct.txt"
+USING Extractors.Text(delimiter: '|', skipFirstNRows: 1);
+
+DROP VIEW IF EXISTS ProductCategoryView;
+
+CREATE VIEW ProductCategoryView AS  
+EXTRACT [ProductCategoryKey]            int,
+        [ProductCategoryAlternateKey]   int,
+        [EnglishProductCategoryName]    string,
+        [SpanishProductCategoryName]    string,
+        [FrenchProductCategoryName]     string
+FROM "/Raw/AWSQLDB/DimProductCategory.txt"
+USING Extractors.Text(delimiter: '|', skipFirstNRows: 1);
+
+DROP VIEW IF EXISTS ProductSubcategoryView;
+
+CREATE VIEW ProductSubcategoryView AS  
+EXTRACT [ProductSubcategoryKey]             int?,
+        [ProductSubcategoryAlternateKey]    int,
+        [EnglishProductSubcategoryName]     string,
+        [SpanishProductSubcategoryName]     string,
+        [FrenchProductSubcategoryName]      string,
+        [ProductCategoryKey]                int
+FROM "/Raw/AWSQLDB/DimProductSubcategory.txt"
+USING Extractors.Text(delimiter: '|', skipFirstNRows: 1);
+
+@res =
+SELECT p.EnglishProductName AS ProductName,
+       p.StandardCost,
+       pc.EnglishProductCategoryName AS ProductCategoryName,
+       fis.UnitPrice,
+       fis.SalesAmount
+FROM FactInternetSalesView AS fis
+     INNER JOIN
+        ProductView AS p
+     ON fis.ProductKey == p.ProductKey
+     INNER JOIN
+        ProductSubcategoryView AS psc
+     ON psc.ProductSubcategoryKey == p.ProductSubcategoryKey
+     INNER JOIN
+        ProductCategoryView AS pc
+     ON psc.ProductCategoryKey == pc.ProductCategoryKey
+     INNER JOIN
+        BikeCollisionData AS bcd
+    ON pc.EnglishProductCategoryName == bcd.joinKey
+GROUP BY p.EnglishProductName, p.StandardCost, pc.EnglishProductCategoryName, fis.UnitPrice, fis.SalesAmount;
+
+OUTPUT @res
+TO @output
+USING Outputters.Text(delimiter : '|', outputHeader : true);
