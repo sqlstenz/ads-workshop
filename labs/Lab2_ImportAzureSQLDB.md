@@ -117,7 +117,7 @@
 
 #### 2.	Select "Query Editor" on the left side of the screen
 
-	![](/screenshots/Lab2_ImportAzureSQLDB/RestoreSQLDB18_QueryEditor.png)
+   ![](/screenshots/Lab2_ImportAzureSQLDB/RestoreSQLDB18_QueryEditor.png)
 
 #### 3.	Connect to the DB using the Query Editor
 
@@ -127,10 +127,10 @@
 
    **3. Password:** P@ssw0rd01
 
-	![](/screenshots/Lab2_ImportAzureSQLDB/RestoreSQLDB19_ConnectQueryEditor.png)
+   ![](/screenshots/Lab2_ImportAzureSQLDB/RestoreSQLDB19_ConnectQueryEditor.png)
 
 #### 4.	Run query in Query Editor
 
-	![](/screenshots/Lab2_ImportAzureSQLDB/RestoreSQLDB20_SelectDataQueryEditor.png)
+   ![](/screenshots/Lab2_ImportAzureSQLDB/RestoreSQLDB20_SelectDataQueryEditor.png)
 
 
