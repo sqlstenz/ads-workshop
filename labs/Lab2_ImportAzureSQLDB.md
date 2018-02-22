@@ -6,7 +6,7 @@
 
 #### 2.	Search for "blob" in the marketplace - Select "Storage account - blob, file, table, queue" and click "Create"
 
-![](/screenshots/Lab2_ImportAzureSQLDB/RestoreSQLDB01_Search.png)
+   ![](/screenshots/Lab2_ImportAzureSQLDB/RestoreSQLDB01_Search.png)
 
 #### 3. Enter configuration details for Azure blob storage account
 
